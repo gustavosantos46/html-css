@@ -1,0 +1,226 @@
+var RastreamentoDestinatarioModel = /** @class */ (function () {
+    function RastreamentoDestinatarioModel() {
+    }
+    RastreamentoDestinatarioModel.PesquisarPedido = function (_codigo) {
+        var urlparamenter = new RastreamentoDestinatarioController();
+        var captRandom = Math.random();
+        //@ts-ignore
+        captRandom = captRandom.toString();
+        //@ts-ignore
+        var captcha = grecaptcha.getResponse();
+        var rCpatcha = captcha + '|' + captRandom;
+        var cpfCnpj = $('#cpfCnpj').val().replace(/([^\d])+/gim, '');
+        var codigoEmpresa = urlparamenter.getUrlParameter('ce');
+        if (!($.IsBlank(codigoEmpresa))) {
+            codigoEmpresa = decodeURIComponent(codigoEmpresa);
+        }
+        var codigo = _codigo;
+        $.MostrarCarregando();
+        $.ajax({
+            url: urlApi + 'gestao/api/PesquisasExternas/PesquisarPedidosCnpjCpf' + "?" + new Date().getTime(),
+            data: {
+                "codigo": codigo,
+                "cpf_cnpj": cpfCnpj,
+                "g-recaptcha-response": rCpatcha,
+                "codigo_empresa": codigoEmpresa,
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (result) {
+                if (result != null) {
+                    $('#formRastreio').removeClass('formRastreio');
+                    $('#formRastreio').addClass('d-none');
+                    $('#captcha').hide();
+                    $('#title-rastreamento').hide();
+                    $('#tabelaDadosPedidos').removeClass('d-none');
+                    if (result[0].length > 1) {
+                        TabelaDestinatarioView.DadosTable(result);
+                        $('#btn-voltar-rastreamento').removeClass('d-none');
+                    }
+                    else {
+                        $('#tabelaDadosPedidos').hide();
+                        $('#barra-status').removeClass('d-none');
+                        $('#data-prevista').removeClass('d-none');
+                        if (result[0][0].abrir_chamado_rastreamento == true) {
+                            $('#btn-reg-reclamacao').removeClass('d-none');
+                        }
+                        else {
+                            $('#btn-reg-reclamacao').addClass('d-none');
+                        }
+                        if (result[0][0].notas != null || result[0][0].notas != undefined) {
+                            $('#nfLabel').html("<label class=\"label-card\">Nota fiscal:</label><span class=\"label-rastreamento pl-2\">" + result[0][0].notas + "</span>");
+                        }
+                        else {
+                            $("#nfLabel").html(' ');
+                        }
+                        if (result[0][0].destinatario != null || result[0][0].destinatario != undefined) {
+                            $("#lblDestinatario").html(result[0][0].destinatario);
+                        }
+                        else {
+                            $("#lblDestinatario").html(' ');
+                        }
+                        if (result[0][0].numero_pedido != null || result[0][0].numero_pedido != undefined) {
+                            $('#pedidoLabel').html("<label class=\"label-card\">N\u00FAmero do pedido:</label><span class=\"label-rastreamento pl-2\">" + result[0][0].numero_pedido + "</span>");
+                        }
+                        else {
+                            $("#pedidoLabel").html(' ');
+                        }
+                        if (result[0][0].site_empresa != null || result[0][0].site_empresa != undefined) {
+                            result[0][0].site_empresa.match(/http/) ? $('#sitelabel').html("<label class=\"label-card\">Site:</label><span  class=\"label-rastreamento pl-2\"><a href=\"" + result[0][0].site_empresa + "\" target=\"_blank\">" + result[0][0].site_empresa + "</a></span>") : $('#sitelabel').html("<label class=\"label-card\">Site:</label><span  class=\"label-rastreamento pl-2\"><a href=\"http://" + result[0][0].site_empresa + "\" target=\"_blank\">" + result[0][0].site_empresa + "</a></span>");
+                        }
+                        else {
+                            $("#sitelabel").html(' ');
+                        }
+                        if (result[0][0].remetente != null || result[0][0].remetente != undefined) {
+                            $('#remetenteLabel').html("<label class=\"label-card\">Remetente:</label><span  class=\"label-rastreamento pl-2\">" + result[0][0].remetente + "</span>");
+                        }
+                        else {
+                            $('#remetenteLabel').html(' ');
+                        }
+                        if (result[0][0].empresa != null || result[0][0].empresa != undefined) {
+                            $("#lblTransportadora").html(result[0][0].empresa);
+                            $('#lblTransportadora').attr('href', result[0][0].site_empresa);
+                        }
+                        else {
+                            $("#lblTransportadora").html(' ');
+                        }
+                        if ($.IsBlank(result[0][0].fornecedor_email)) {
+                            $('#emailabel').html();
+                        }
+                        else {
+                            $('#emailabel').html("<label class=\"label-card\">Email:</label><span  class=\"label-rastreamento pl-2\"><a href=\"mailto:" + result[0][0].fornecedor_email + "\">" + result[0][0].fornecedor_email + "<a/></span>");
+                        }
+                        if (result[0][0].fornecedor_telefone_1 != null || result[0][0].fornecedor_telefone_1 != undefined) {
+                            $('#telelabel').html("<label class=\"label-card\">Telefone:</label><span class=\"label-rastreamento pl-2\">" + result[0][0].fornecedor_telefone_1 + "</span>");
+                        }
+                        else {
+                            $("#lblTetadora").html(' ');
+                        }
+                        if (result[0][0].ar_postagem != null || result[0][0].ar_postagem != undefined) {
+                            var url = "https://correiosrastrear.com/?tracking_field=" + result[0][0].ar_postagem;
+                            $('#correiolabel').html("<label class=\"label-card\">N\u00BA correios:</label><a class=\"pl-2\"href=\"" + url + "\" target=\"_blank\">" + result[0][0].ar_postagem + "<a/>");
+                        }
+                        else {
+                            $("#correiolabel").html('');
+                        }
+                        if (result[0][0].url_logo != null) {
+                            $('#imgLogo').attr('src', result[0][0].url_logo);
+                        }
+                    }
+                    if (result != null) {
+                        $.removeErro();
+                        RastreamentoDestinatarioView.dadosBarraProgresso(result);
+                        TimeLineDestinatarioView.DadosTimeLine(result);
+                        $('#btn-enviar').on('click', function () {
+                            rastreamentoDestinatarioModel.SalvarReclamacao(result[0][0].codigo);
+                        });
+                    }
+                    else {
+                        $.mensagemErro();
+                    }
+                }
+                else {
+                    $.mensagemErro();
+                }
+            },
+            error: function (result) {
+                $.esconderCarregando();
+                $.mensagemErro();
+                $('#footer').addClass('fixed-bottom');
+            }
+        }).always(function () {
+            $.esconderCarregando();
+        });
+    };
+    RastreamentoDestinatarioModel.esconderComAsteriscos = function (numero) {
+        var divisaoNumero = numero.length / 2;
+        var arrayNumero = numero.split('');
+        var numeroAsterisco = arrayNumero.slice(0, divisaoNumero);
+        for (var i = 0; i < divisaoNumero; i++) {
+            numeroAsterisco.push('*');
+        }
+        return numeroAsterisco.join('');
+    };
+    RastreamentoDestinatarioModel.prototype.SalvarReclamacao = function (codigo) {
+        var codigoPedido = codigo;
+        //@ts-ignore
+        var codigoSelect = document.querySelector('#selectSolitacao').value;
+        var emailvalidaCao = document.querySelector('#email');
+        //@ts-ignore
+        var nome = document.querySelector('#nome').value;
+        //@ts-ignore
+        var email = document.querySelector('#email').value;
+        //@ts-ignore
+        var telefoneContato = document.querySelector('#telefone').value;
+        //@ts-ignore
+        var descricao = document.querySelector('#descriacao').value;
+        var tel = telefoneContato.toString();
+        tel = tel.replace(/([^\d])+/gim, '');
+        var dados = {
+            "nome": nome,
+            "descricao": descricao,
+            "emails": email,
+            "celulares": tel,
+            "codigo": codigoSelect
+        };
+        if (nome == '') {
+            $('#erroNome').html('Esse campo é obrigatório');
+            $('#nome').focus().addClass('input-error');
+            $('.icon-erro-nome').css('display', 'block');
+            $('#nome').keydown(function () {
+                $('#erroNome').html('');
+                $('.icon-erro-nome').css('display', 'none');
+                $('#nome').removeClass('input-error');
+            });
+        }
+        else if (email == '' || ValidateDestinatarioController.ValidationEmail(emailvalidaCao) == false) {
+            $('#erroEmail').html('E-mail inválido');
+            $('#email').focus().addClass('input-error');
+            $('.icon-erro-email').css('display', 'block');
+            $('#email').keydown(function () {
+                $('#erroEmail').html('');
+                $('.icon-erro-email').css('display', 'none');
+                $('#email').removeClass('input-error');
+            });
+        }
+        else if (tel.length < 10) {
+            $('#erroTelefone').html('Telefone inválido');
+            $('#telefone').focus().addClass('input-error');
+            $('.icon-erro-telefone').css('display', 'block');
+            $('#telefone').keydown(function () {
+                $('#erroTelefone').html('');
+                $('.icon-erro-telefone').css('display', 'none');
+                $('#telefone').removeClass('input-error');
+            });
+        }
+        else if (descricao == '') {
+            $('#erroDescricao').html('Descreva sua reclamação');
+            $('#descriacao').focus();
+            $('#descriacao').addClass('input-error');
+            $('#descriacao').keydown(function () {
+                $('#erroDescricao').html('');
+                $('#descriacao').removeClass('input-error');
+            });
+        }
+        else {
+            $.MostrarCarregando();
+            $.ajax({
+                url: urlApi + "api/Reclamacoes/ReclamacaoViaSite?_codigoPedido=" + codigoPedido,
+                data: dados,
+                type: 'POST',
+                dataType: 'json',
+                success: function () {
+                    $.esconderCarregando();
+                    $('#modalSucesso').modal('show');
+                    $('#modal-reg-reclamacao').modal('hide');
+                },
+                error: function () {
+                    $.esconderCarregando();
+                    $('#modalErrorSalvar').modal('show');
+                }
+            });
+        }
+    };
+    return RastreamentoDestinatarioModel;
+}());
+var rastreamentoDestinatarioModel = new RastreamentoDestinatarioModel();

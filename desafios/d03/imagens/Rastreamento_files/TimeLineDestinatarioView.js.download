@@ -1,0 +1,217 @@
+var TimeLineDestinatarioView = /** @class */ (function () {
+    function TimeLineDestinatarioView() {
+    }
+    TimeLineDestinatarioView.DadosTimeLine = function (result) {
+        var detalhePedido = "";
+        var dataPrevista = result[0][0].data_prevista.split('/');
+        var exibirDataPrevista = result[0][0].data_prevista_rastreamento_externo;
+        var dataPrevistaDate = new Date(dataPrevista[2], dataPrevista[1] - 1, dataPrevista[0]);
+        var dataHoje = new Date();
+        var statusRastreio = result[1][0].ocorrencia;
+        var dataColeta = result[0][0].data_coleta;
+        var tratando_insucesso = result[0][0].tratando_insucesso;
+        //Verificando o dia da semana da data de entrega do pedido
+        if (dataPrevistaDate.getDay() == 0) {
+            dataPrevista.push('Domingo');
+        }
+        if (dataPrevistaDate.getDay() == 1) {
+            dataPrevista.push('Segunda-feira');
+        }
+        if (dataPrevistaDate.getDay() == 2) {
+            dataPrevista.push('Terça-feira');
+        }
+        if (dataPrevistaDate.getDay() == 3) {
+            dataPrevista.push('Quarta-feira');
+        }
+        if (dataPrevistaDate.getDay() == 4) {
+            dataPrevista.push('Quinta-feira');
+        }
+        if (dataPrevistaDate.getDay() == 5) {
+            dataPrevista.push('Sexta-feira');
+        }
+        if (dataPrevistaDate.getDay() == 6) {
+            dataPrevista.push('Sábado');
+        }
+        var dia = dataPrevista[0];
+        var mes = dataPrevista[1];
+        var diadaSemana = dataPrevista[3];
+        if (exibirDataPrevista === true || statusRastreio == 'Entregue' || statusRastreio == 'Entregue (Comprovante digitalizado)') {
+            if (tratando_insucesso === true) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Insucesso na entrega - Seu pedido est\u00E1 em tratativa!</div>");
+            }
+            else if (statusRastreio == 'Entregue' || statusRastreio == 'Entregue (Comprovante digitalizado)') {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Seu pedido j\u00E1 foi entregue!</div>");
+                $('#divDadosRecebedor').removeClass('d-none');
+                $('#recebedor').children().insertBefore($('#recebedor').html("Quem recebeu: " + (result[0][0].recebedor != undefined ? result[0][0].recebedor : "N\u00E3o informado!")));
+                $('#recebedor_documento').children().insertBefore($('#recebedor_documento').html("N\u00B0 documento: " + (result[0][0].recebedor_documento != undefined ? result[0][0].recebedor_documento : "N\u00E3o informado!")));
+                $('#recebedor_parentesco').children().insertBefore($('#recebedor_parentesco').html("Parentesco: " + (result[0][0].recebedor_parentesco != undefined ? result[0][0].recebedor_parentesco : "N\u00E3o informado!")));
+            }
+            else if (statusRastreio == 'Gerado ( arquivo processado )') {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Aguardando confirma\u00E7\u00E3o de coleta!</div>");
+            }
+            else if (statusRastreio.includes('Devolvido')) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Pedido devolvido!</div>");
+            }
+            else if (statusRastreio.includes('Cancelado')) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Pedido cancelado!</div>");
+            }
+            else if (dataHoje.getDate() == dataPrevistaDate.getDate() - 1) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i> Chegar\u00E1 at\u00E9 amanh\u00E3! </div>");
+            }
+            else if (dataHoje.getDate() == dataPrevistaDate.getDate()) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i> Chegar\u00E1 Hoje! </div>");
+            }
+            else if (!dataColeta) {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>Processo de transporte n\u00E3o iniciado!</div>");
+            }
+            else {
+                $('#data-prevista').html("<div><i class='fa fa-map-marker pr-2' style=\"color: orange; font-size: 30px;\"></i>O seu pedido chegar\u00E1 at\u00E9 o dia " + dia + "/" + mes + " (" + diadaSemana + ")</div>");
+            }
+        }
+        else {
+            $('#data-prevista').html("<img class=\"text-center\" src=\"./images/logo/box-title.png\" alt=\"Caixa\">");
+        }
+        for (var i = 0; i < result[1].length; i++) {
+            var localOcorrencia = result[1][i].local;
+            var dataOcorrencia = result[1][i].data_ocorrencia.split('/');
+            var diaHorario = result[1][i].data_ocorrencia.split(' ');
+            var mesOcorrencia = dataOcorrencia.map(function (item, indice) {
+                //retornando um novo array com o mês correspondete
+                //@ts-ignore
+                if (dataOcorrencia[1] == 01) {
+                    dataOcorrencia[1] = 'JAN';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 02) {
+                    dataOcorrencia[1] = 'FEV';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 03) {
+                    dataOcorrencia[1] = 'MAR';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 04) {
+                    dataOcorrencia[1] = 'ABR';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 05) {
+                    dataOcorrencia[1] = 'MAI';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 06) {
+                    dataOcorrencia[1] = 'JUN';
+                }
+                ;
+                //@ts-ignore
+                if (dataOcorrencia[1] == 07) {
+                    dataOcorrencia[1] = 'JUL';
+                }
+                ;
+                if (dataOcorrencia[1] == 08) {
+                    dataOcorrencia[1] = 'AGO';
+                }
+                ;
+                if (dataOcorrencia[1] == 09) {
+                    dataOcorrencia[1] = 'SET';
+                }
+                ;
+                if (dataOcorrencia[1] == 10) {
+                    dataOcorrencia[1] = 'OUT';
+                }
+                ;
+                if (dataOcorrencia[1] == 11) {
+                    dataOcorrencia[1] = 'NOV';
+                }
+                ;
+                if (dataOcorrencia[1] == 12) {
+                    dataOcorrencia[1] = 'DEZ';
+                }
+                ;
+                return item;
+            });
+            var dataTimeline = diaHorario[0].split('/');
+            var diaSemanaTimelineDate = new Date(dataTimeline[2], dataTimeline[1] - 1, dataTimeline[0]);
+            //Verificando o dia da semana da data de entrega do pedido
+            if (diaSemanaTimelineDate.getDay() == 0) {
+                dataTimeline.push('domingo');
+            }
+            if (diaSemanaTimelineDate.getDay() == 1) {
+                dataTimeline.push('segunda-feira');
+            }
+            if (diaSemanaTimelineDate.getDay() == 2) {
+                dataTimeline.push('terça-feira');
+            }
+            if (diaSemanaTimelineDate.getDay() == 3) {
+                dataTimeline.push('quarta-feira');
+            }
+            if (diaSemanaTimelineDate.getDay() == 4) {
+                dataTimeline.push('quinta-feira');
+            }
+            if (diaSemanaTimelineDate.getDay() == 5) {
+                dataTimeline.push('sexta-feira');
+            }
+            if (diaSemanaTimelineDate.getDay() == 6) {
+                dataTimeline.push('sábado');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 0) {
+                dataTimeline.push('jan');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 1) {
+                dataTimeline.push('fev');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 2) {
+                dataTimeline.push('mar');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 3) {
+                dataTimeline.push('abr');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 4) {
+                dataTimeline.push('mai');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 5) {
+                dataTimeline.push('jun');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 6) {
+                dataTimeline.push('jul');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 7) {
+                dataTimeline.push('ago');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 8) {
+                dataTimeline.push('set');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 9) {
+                dataTimeline.push('out');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 10) {
+                dataTimeline.push('nov');
+            }
+            if (diaSemanaTimelineDate.getMonth() == 11) {
+                dataTimeline.push('dez');
+            }
+            if (result[0][0].mostrar_localidade_rastreamento == true) {
+                //Criando a time line dinâmicamente
+                detalhePedido += "<li>\n                        <div>\n                            <div class=\"col-12 time-line\">\n                            <div class=\"circle-status\"></div>\n\n                            </div>\n\n                            <span class=\"mb-5\"></span>\n                            <div class=\"row\">\n                                <div class=\"col-xl-12 col-lg-12 col-12\">\n                                    <div class=\"data-ocorrencia time-line\">\n\n                                    " + result[1][i].ocorrencia + "\n\n\n                                    </div>\n                                    <div class=\"local-ocorrencia data-ocorrencia time-line mt-1\">" + dataTimeline[0] + "/" + dataTimeline[1] + "  - " + diaHorario[1].substr(0, 5) + "  | Cidade: " + localOcorrencia + " </div>\n                                </div>\n                                <div class=\"col-xl-7 col-lg-6 col-6\">\n                                    <div class=\"ocorrencia time-line \"></div>\n                                </div>\n\n                            </div>\n                        </div>\n                        </li>";
+            }
+            else {
+                //Criando a time line dinâmicamente
+                detalhePedido += "<li>\n                <div>\n                    <div class=\"col-12 time-line\">\n                    <div class=\"circle-status\"></div>\n        \n                    </div>\n        \n                    <span class=\"mb-5\"></span>\n                    <div class=\"row\">\n                        <div class=\"col-xl-12 col-lg-12 col-12\">\n                            <div class=\"data-ocorrencia time-line\">\n        \n                            " + result[1][i].ocorrencia + "\n        \n        \n                            </div>\n                            <div class=\"local-ocorrencia data-ocorrencia time-line mt-1\">" + dataTimeline[0] + "/" + dataTimeline[1] + "  - " + diaHorario[1].substr(0, 5) + "</div>\n                        </div>\n                        <div class=\"col-xl-7 col-lg-6 col-6\">\n                            <div class=\"ocorrencia time-line \"></div>\n                        </div>\n        \n                    </div>\n                </div>\n            </li>";
+            }
+        }
+        //adiconando a time no html
+        $('#ulTimeline').html(detalhePedido);
+        var timeLine = $(".time-line");
+        $(timeLine[0]).addClass('the-date');
+        $(timeLine[0]).html(' <small><i class="fa fa-circle" style="top: 7px;position: absolute;left: 8px; font-size:16px;"></i></small>');
+        $(timeLine[1]).addClass('ultima-ocorrencia-status');
+        $(timeLine[2]).addClass('ultima-ocorrencia');
+        $(timeLine[3]).addClass('ultima-ocorrencia');
+        $(timeLine[4]).addClass('ultima-ocorrencia');
+    };
+    return TimeLineDestinatarioView;
+}());

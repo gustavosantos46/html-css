@@ -1,0 +1,69 @@
+var RastreamentoDestinatarioView = /** @class */ (function () {
+    function RastreamentoDestinatarioView() {
+    }
+    RastreamentoDestinatarioView.prototype.init = function () {
+        this.Components();
+    };
+    RastreamentoDestinatarioView.dadosBarraProgresso = function (result) {
+        var barraStatus = "";
+        for (var i = 0; i < result[1].length; i++) {
+            var gerado = result[1][i].data_ocorrencia.split(' ');
+            barraStatus += "<div class=\"step\"  data-toggle=\"tooltip\" data-placement=\"top\" title='Data ocorr\u00EAncia: " + gerado[0] + " Hor\u00E1rio: " + gerado[1].substr(0, 5) + "'> <span>" + result[1][i].ocorrencia + "</span> </div>";
+        }
+        var barraStatusArray = barraStatus.split('</div>').reverse();
+        // $('#barra-progresso').html(barraStatusArray);
+        // $('[data-toggle="tooltip"]').tooltip();
+        var barraStatusArray = barraStatus.split('</div>');
+        var barraStatusNew = [];
+        for (var i = 0; i <= 3; i++) {
+            barraStatusNew.push(barraStatusArray[i]);
+        }
+        var status = barraStatusNew.reverse();
+        status = status.filter(function (element) {
+            if (element != '' || element != undefined || element != null) {
+                return element;
+            }
+        });
+        $('#barra-progresso').html(status);
+        var current = status.length - 1;
+        var steps = jQuery(".step");
+        $(steps[current]).addClass('current');
+        $('.texto-status').html(result[0][0].ultima_ocorrencia);
+        $('.texto-status-data').html(result[0][0].data_prevista_original);
+    };
+    RastreamentoDestinatarioView.prototype.Components = function () {
+        $.IsBlank = function (_obj) {
+            return (!_obj || $.trim(_obj) === "");
+        };
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        $.MostrarCarregando = function () {
+            $('.loader').fadeIn(0, 0.5);
+        };
+        $.esconderCarregando = function () {
+            $('.loader').fadeOut(0);
+        };
+        $.mensagemErro = function () {
+            $('#modalError').modal('show');
+        };
+        $.erroNaPaginba = function () {
+            $('#erroPesquisa').removeClass('d-none');
+        };
+        $.removeErro = function () {
+            $('#status').removeClass('d-none');
+            $('#detalhes-rastreamento').removeClass('d-none');
+            $('#erroPesquisa').addClass('d-none');
+            $('#div-input-rastreamento').addClass('d-none');
+            $('#recaptcha').hide();
+        };
+        $(window).on('load', function () {
+            $.esconderCarregando();
+            $.get('ListagemVariosPedidosRastreamentoExterno.html?' + new Date().getTime(), function (result) {
+            });
+        });
+    };
+    return RastreamentoDestinatarioView;
+}());
+var rastreamentoDestinatarioView = new RastreamentoDestinatarioView();
+rastreamentoDestinatarioView.init();

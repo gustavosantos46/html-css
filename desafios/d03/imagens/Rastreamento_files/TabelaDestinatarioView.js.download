@@ -1,0 +1,62 @@
+var TabelaDestinatarioView = /** @class */ (function () {
+    function TabelaDestinatarioView() {
+    }
+    TabelaDestinatarioView.DadosTable = function (result) {
+        var dados = result[0];
+        var table = $('#tabelaPedidos').DataTable({
+            "language": {
+                "paginate": {
+                    "previous": "Anterior",
+                    "next": "Próximo"
+                },
+                "search": "Pesquisar:",
+                "info": "Mostrando _PAGE_ of _PAGES_",
+                "infoEmpty": "Sem dados para mostrar",
+                "infoFiltered": "(filtered from _MAX_ total records)"
+            },
+            "searching": false,
+            "bLengthChange": false,
+            "bInfo": false,
+            data: dados,
+            columns: [
+                { "defaultContent": "<div class='d-flex justify-content-center'><button id='btn-dataTable' class='btn-dataTable'>Detalhar</button></div>" },
+                { data: 'data_cliente', },
+                { data: 'numero_pedido' },
+                { data: 'destinatario' },
+                { data: 'situacao' },
+                { data: 'remetente' },
+                { data: 'servico' },
+                { data: 'numero_cliente' }
+            ]
+        });
+        $('#tabelaPedidos tbody').on('click', 'button', function () {
+            var data = table.row($(this).parents('tr')).data();
+            $('#barra-status').removeClass('d-none');
+            $('#tabelaDadosPedidos').addClass('d-none');
+            $('#data-prevista').removeClass('d-none');
+            var codigo = data.codigo;
+            RastreamentoDestinatarioModel.PesquisarPedido(codigo);
+            if (data.abrir_chamado_rastreamento == true) {
+                $('#btn-reg-reclamacao').removeClass('d-none');
+            }
+            else {
+                $('#btn-reg-reclamacao').addClass('d-none');
+            }
+        });
+        $('#tabelaPedidos tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            $('#barra-status').removeClass('d-none');
+            $('#tabelaDadosPedidos').addClass('d-none');
+            $('#data-prevista').removeClass('d-none');
+            var codigo = data.codigo;
+            RastreamentoDestinatarioModel.PesquisarPedido(codigo);
+            if (data.abrir_chamado_rastreamento == true) {
+                $('#btn-reg-reclamacao').removeClass('d-none');
+            }
+            else {
+                $('#btn-reg-reclamacao').addClass('d-none');
+            }
+        });
+    };
+    return TabelaDestinatarioView;
+}());

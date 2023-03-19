@@ -1,0 +1,210 @@
+var ValidateDestinatarioController = /** @class */ (function () {
+    function ValidateDestinatarioController() {
+    }
+    ValidateDestinatarioController.prototype.init = function () {
+        this.ValidarCaptcha();
+        $('#cpfCnpj').keypress(function () {
+            $('.alertError').html('');
+            $('#cpfCnpj').removeClass('borda-error');
+        });
+    };
+    ValidateDestinatarioController.ValidationEmail = function (email) {
+        var usuario = email.value.substring(0, email.value.indexOf("@"));
+        var dominio = email.value.substring(email.value.indexOf("@") + 1, email.value.length);
+        if ((usuario.length >= 1) &&
+            (dominio.length >= 3) &&
+            (usuario.search("@") == -1) &&
+            (dominio.search("@") == -1) &&
+            (usuario.search(" ") == -1) &&
+            (dominio.search(" ") == -1) &&
+            (dominio.search(".") != -1) &&
+            (dominio.indexOf(".") >= 1) &&
+            (dominio.lastIndexOf(".") < dominio.length - 1)) {
+            $('#erroEmail').html('');
+            return true;
+        }
+        else {
+            $('#erroEmail').html('E-mail inválido');
+            $('#email').focus();
+            $('#email').focus().addClass('input-error');
+            $('.icon-erro-email').css('display', 'block');
+            $('#email').keydown(function () {
+                $('#erroEmail').html('');
+                $('.icon-erro-email').css('display', 'none');
+                $('#email').removeClass('input-error');
+            });
+            return false;
+        }
+    };
+    ValidateDestinatarioController.prototype.retirarFormatacao = function (campoTexto) {
+        campoTexto.value = campoTexto.value.replace(/(\.|\/|\-)/g, "");
+    };
+    ValidateDestinatarioController.prototype.mascaraCpf = function (valor) {
+        return valor.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "\$1.\$2.\$3\-\$4");
+    };
+    ValidateDestinatarioController.prototype.mascaraCnpj = function (valor) {
+        return valor.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "\$1.\$2.\$3\/\$4\-\$5");
+    };
+    ValidateDestinatarioController.prototype.maskCampo = function (campo) {
+        if (campo.value.length == 11) {
+            campo.value = this.mascaraCpf(campo.value);
+            document.querySelector('.msgErroCnpjCpf').innerHTML = '';
+        }
+        else {
+            campo.value = this.mascaraCnpj(campo.value);
+            document.querySelector('.msgErroCnpjCpf').innerHTML = '';
+        }
+    };
+    ValidateDestinatarioController.prototype.validarCPF = function (strCPF) {
+        var Soma;
+        var Resto;
+        Soma = 0;
+        strCPF = strCPF.replace(/[^0-9]/g, '').toString();
+        if (strCPF == "00000000000")
+            return false;
+        if (strCPF == "11111111111")
+            return false;
+        if (strCPF == "22222222222")
+            return false;
+        if (strCPF == "33333333333")
+            return false;
+        if (strCPF == "44444444444")
+            return false;
+        if (strCPF == "55555555555")
+            return false;
+        if (strCPF == "66666666666")
+            return false;
+        if (strCPF == "77777777777")
+            return false;
+        if (strCPF == "88888888888")
+            return false;
+        if (strCPF == "99999999999")
+            return false;
+        for (var i = 1; i <= 9; i++)
+            Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
+        Resto = (Soma * 10) % 11;
+        if ((Resto == 10) || (Resto == 11))
+            Resto = 0;
+        if (Resto != parseInt(strCPF.substring(9, 10)))
+            return false;
+        Soma = 0;
+        for (var i = 1; i <= 10; i++)
+            Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
+        Resto = (Soma * 10) % 11;
+        if ((Resto == 10) || (Resto == 11))
+            Resto = 0;
+        if (Resto != parseInt(strCPF.substring(10, 11)))
+            return false;
+        return true;
+    };
+    //Validação do CNPJ
+    ValidateDestinatarioController.prototype.validarCNPJ = function (cnpj) {
+        cnpj = cnpj.replace(/[^\d]+/g, '');
+        if (cnpj == '')
+            return false;
+        if (cnpj.length != 14)
+            return false;
+        // Elimina CNPJs invalidos conhecidos
+        if (cnpj == "00000000000000" ||
+            cnpj == "11111111111111" ||
+            cnpj == "22222222222222" ||
+            cnpj == "33333333333333" ||
+            cnpj == "44444444444444" ||
+            cnpj == "55555555555555" ||
+            cnpj == "66666666666666" ||
+            cnpj == "77777777777777" ||
+            cnpj == "88888888888888" ||
+            cnpj == "99999999999999")
+            return false;
+        // Valida DVs
+        var tamanho = cnpj.length - 2;
+        var numeros = cnpj.substring(0, tamanho);
+        var digitos = cnpj.substring(tamanho);
+        var soma = 0;
+        var pos = tamanho - 7;
+        for (var i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2)
+                pos = 9;
+        }
+        var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(0))
+            return false;
+        tamanho = tamanho + 1;
+        numeros = cnpj.substring(0, tamanho);
+        soma = 0;
+        pos = tamanho - 7;
+        for (var i = tamanho; i >= 1; i--) {
+            soma += numeros.charAt(tamanho - i) * pos--;
+            if (pos < 2)
+                pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        if (resultado != digitos.charAt(1))
+            return false;
+        return true;
+    };
+    ValidateDestinatarioController.prototype.ValidarCaptcha = function () {
+        var _this = this;
+        /*validando se o campo está vazio antes do captcha estar ativado*/
+        $('#btn-rastreamento-cpfCnpj').click(function () {
+            var input = $('#cpfCnpj').val().replace(/[^0-9]/g, '');
+            if (input.length == 11) {
+                _this.validarCPF(input);
+                if (_this.validarCPF(input)) {
+                    if (_this.recaptchaCallback()) {
+                        RastreamentoDestinatarioModel.PesquisarPedido("");
+                    }
+                    else {
+                        $('.alertError').html('Marque a caixa para continuar!');
+                    }
+                }
+                else {
+                    $('.alertError').html('CPF Inválido<i class="fa fa-exclamation ml-1"></i>');
+                    $('#cpfCnpj').addClass('borda-error');
+                    $('#cpfCnpj').focus();
+                }
+            }
+            else if (input.length == 14) {
+                if (_this.validarCNPJ(input)) {
+                    if (_this.recaptchaCallback()) {
+                        RastreamentoDestinatarioModel.PesquisarPedido("");
+                    }
+                    else {
+                        $('.alertError').html('Marque a caixa para continuar!');
+                    }
+                }
+                else {
+                    $('.alertError').html('CNPJ Inválido<i class="fa fa-exclamation ml-1"></i>');
+                    $('#cpfCnpj').addClass('borda-error');
+                    $('#cpfCnpj').focus();
+                }
+            }
+            else {
+                $('.alertError').html('Dados inválidos<i class="fa fa-exclamation ml-1"></i>');
+                $('#cpfCnpj').addClass('borda-error');
+                $('#cpfCnpj').focus();
+            }
+        });
+        // var cap = rastreamentoDestinatarioController.getUrlParameter('cap');
+        // if (cap == 'false') {
+        //     $('#captcha').addClass('d-none');
+        //     $('#title-rastreamento').hide();
+        //     RastreamentoDestinatarioModel.PesquisarPedido("");
+        // } 
+    };
+    ValidateDestinatarioController.prototype.recaptchaCallback = function () {
+        //@ts-ignore
+        var captcha = window.grecaptcha.getResponse(this.state);
+        if (captcha != '') {
+            $('.alertError').html('');
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    return ValidateDestinatarioController;
+}());
+var validateDestinatarioController = new ValidateDestinatarioController();
+validateDestinatarioController.init();
