@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagens/favicon-32x32.png" type="image/x-icon">
+    <title>Desafio Astronauta</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #container{
+            background-image: url(imagens/espaco.jpg);
+            background-size: 100% 100%;
+            position: relative;
+            height: 100vh;
+            
+        }
+        header{
+            background-color: rgba(0, 0, 0, 0.322);
+        }
+        nav{
+            padding: 25px 20px;
+            text-align: right;
+        }
+        nav a{
+            font-size: 18px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #32A9C7;
+            text-decoration: none;
+            margin: 10px;    
+        }
+        a:hover{
+            background-color: rgba(158, 176, 255, 0.164);
+            color: #2889A1 ;
+            text-decoration: underline;
+            padding: 5px;
+            border-radius: 5px;
+            transition-duration: 0.3s;
+        }
+        h1{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            font-weight: normal;
+            color: white;
+            text-align: right;
+            padding-top: 340px;
+            padding-right: 120px;
+        }
+        strong{
+            color: #3BCAED;
+        }
+        form{
+            text-align: right;
+            padding-top: 5px;
+            padding-right: 70px;
+        }
+        #conteudo{
+            background: url(imagens/astronauta.png) center center no-repeat;
+            position: absolute;
+            height: 700px;
+            width: 670px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <section id="container">
+    <header>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Know more</a>
+            <a href="#">Contacts</a>
+            <a href="#">Login</a>
+        </nav>
+    </header>
+        <article id="conteudo">
+        </article>
+        <h1><strong>Sign up</strong> now and see about lives in space!</h1>
+        <form>
+            <input type="Nome" placeholder="Nome">
+            <input type="email" placeholder="E-mail">
+            <input type="submit" value="Enviar >">
+        </form>
+    </section>
+</body>
+</html>
