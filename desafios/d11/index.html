@@ -19,7 +19,8 @@
             
         }
         header{
-            background-color: rgba(0, 0, 0, 0.322);
+            background-image: linear-gradient(to left, rgba(0, 0, 0, 0.651), transparent);
+            
         }
         nav{
             padding: 25px 20px;
@@ -42,7 +43,7 @@
         }
         h1{
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 18px;
+            font-size: 25px;
             font-weight: normal;
             color: white;
             text-align: right;
@@ -56,12 +57,28 @@
             text-align: right;
             padding-top: 5px;
             padding-right: 70px;
+            flex-direction: column;
+            display: flex;
+            margin-left: 1360px;
+            margin-right: 100px;
+        }
+        input{
+            font-weight: bold;
+            margin: 2px;
+            border-radius: 7px;
+            height: 35px;
+            text-indent: 10px;
+        }
+        #env{
+            margin-left: 142px;
+            width: 100px;
+            text-indent: 0px;
         }
         #conteudo{
             background: url(imagens/astronauta.png) center center no-repeat;
-            position: absolute;
             height: 700px;
             width: 670px;
+            position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
@@ -84,7 +101,7 @@
         <form>
             <input type="Nome" placeholder="Nome">
             <input type="email" placeholder="E-mail">
-            <input type="submit" value="Enviar >">
+            <input id="env" type="submit" value="Enviar >">
         </form>
     </section>
 </body>
