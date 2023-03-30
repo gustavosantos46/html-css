@@ -12,7 +12,7 @@
             padding: 0px;
         }
         #container{
-            background-image: url(imagens/espaco.jpg);
+            background: black url(imagens/espaco.jpg) center center no-repeat fixed;
             background-size: 100% 100%;
             position: relative;
             height: 100vh;
@@ -20,7 +20,6 @@
         }
         header{
             background-image: linear-gradient(to left, rgba(0, 0, 0, 0.651), transparent);
-            
         }
         nav{
             padding: 25px 20px;
@@ -47,7 +46,7 @@
             font-weight: normal;
             color: white;
             text-align: right;
-            padding-top: 340px;
+            padding-top: 315px;
             padding-right: 120px;
         }
         strong{
@@ -55,7 +54,7 @@
         }
         form{
             text-align: right;
-            padding-top: 5px;
+            padding-top: 15px;
             padding-right: 70px;
             flex-direction: column;
             display: flex;
@@ -75,7 +74,7 @@
             text-indent: 0px;
         }
         #conteudo{
-            background: url(imagens/astronauta.png) center center no-repeat;
+            background: url(imagens/astronauta.png) center no-repeat fixed;
             height: 700px;
             width: 670px;
             position: absolute;
@@ -86,23 +85,23 @@
     </style>
 </head>
 <body>
-    <section id="container">
-    <header>
-        <nav>
-            <a href="#">Home</a>
-            <a href="#">Know more</a>
-            <a href="#">Contacts</a>
-            <a href="#">Login</a>
-        </nav>
-    </header>
-        <article id="conteudo">
-        </article>
-        <h1><strong>Sign up</strong> now and see about lives in space!</h1>
-        <form>
-            <input type="Nome" placeholder="Nome">
-            <input type="email" placeholder="E-mail">
-            <input id="env" type="submit" value="Enviar >">
-        </form>
-    </section>
+        <section id="container">
+        <header>
+            <nav>
+                <a href="#">Home</a>
+                <a href="#">Know more</a>
+                <a href="#">Contacts</a>
+                <a href="#">Login</a>
+            </nav>
+        </header>
+            <article id="conteudo">
+            </article>
+            <h1><em><strong>Sign up</strong> now and see about lives in space!</em></h1>
+            <form>
+                <input type="Nome" placeholder="Nome">
+                <input type="email" placeholder="E-mail">
+                <input id="env" type="submit" value="Enviar >">
+            </form>
+        </section>
 </body>
 </html>
